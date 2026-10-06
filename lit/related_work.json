@@ -1,0 +1,152 @@
+[
+  {
+    "id": "dacunto2025-can-sheaf",
+    "title": "Networks of Causal Abstractions: A Sheaf-theoretic Framework",
+    "authors": "Gabriele D'Acunto, Paolo Di Lorenzo, Sergio Barbarossa",
+    "year": 2025,
+    "venue": "arXiv 2509.25236",
+    "url": "https://arxiv.org/abs/2509.25236",
+    "topic": "can-sheaf",
+    "relevance": "Source of the causal abstraction network and sheaf-consistency diffusion that our gate decides whether to run against each neighbor."
+  },
+  {
+    "id": "hansen2019-spectral-sheaves",
+    "title": "Toward a spectral theory of cellular sheaves",
+    "authors": "Jakob Hansen, Robert Ghrist",
+    "year": 2019,
+    "venue": "Journal of Applied and Computational Topology 3, 315-358",
+    "url": "https://arxiv.org/abs/1808.01513",
+    "topic": "can-sheaf",
+    "relevance": "Provides the sheaf Laplacian and harmonic-section theory underlying consensus of local causal models across the agent graph."
+  },
+  {
+    "id": "beckers2019-abstracting-causal",
+    "title": "Abstracting Causal Models",
+    "authors": "Sander Beckers, Joseph Y. Halpern",
+    "year": 2019,
+    "venue": "AAAI 2019",
+    "url": "https://arxiv.org/abs/1812.03789",
+    "topic": "can-sheaf",
+    "relevance": "Defines constructive causal abstraction; our edge maps between specialists' models are abstractions in this sense."
+  },
+  {
+    "id": "howard1966-information-value",
+    "title": "Information Value Theory",
+    "authors": "Ronald A. Howard",
+    "year": 1966,
+    "venue": "IEEE Transactions on Systems Science and Cybernetics 2(1), 22-26",
+    "url": "https://doi.org/10.1109/TSSC.1966.300074",
+    "topic": "voi",
+    "relevance": "Origin of expected value of information; our gate thresholds the VOI of a neighbor's causal evidence against alignment cost."
+  },
+  {
+    "id": "russell1991-metareasoning",
+    "title": "Principles of Metareasoning",
+    "authors": "Stuart J. Russell, Eric Wefald",
+    "year": 1991,
+    "venue": "Artificial Intelligence 49(1-3), 361-395",
+    "url": "https://doi.org/10.1016/0004-3702(91)90015-C",
+    "topic": "voi",
+    "relevance": "Rational metareasoning: treat alignment computations as actions chosen by expected utility gain minus time cost."
+  },
+  {
+    "id": "horvitz1987-resource-bounded",
+    "title": "Reasoning About Beliefs and Actions Under Computational Resource Constraints",
+    "authors": "Eric J. Horvitz",
+    "year": 1987,
+    "venue": "UAI 1987",
+    "url": "https://arxiv.org/abs/1304.2759",
+    "topic": "voi",
+    "relevance": "Decision-theoretic control of inference under resource limits, which motivates gating rather than always fusing neighbors."
+  },
+  {
+    "id": "krale2023-act-then-measure",
+    "title": "Act-Then-Measure: Reinforcement Learning for Partially Observable Environments with Active Measuring",
+    "authors": "Merlijn Krale, Thiago D. Simao, Nils Jansen",
+    "year": 2023,
+    "venue": "ICAPS 2023",
+    "url": "https://arxiv.org/abs/2303.08271",
+    "topic": "voi",
+    "relevance": "Modern RL formulation where measuring is a costed action bounded by value of information; we gate evidence acquisition the same way."
+  },
+  {
+    "id": "singh2019-ic3net",
+    "title": "Learning when to Communicate at Scale in Multiagent Cooperative and Competitive Tasks",
+    "authors": "Amanpreet Singh, Tushar Jain, Sainbayar Sukhbaatar",
+    "year": 2019,
+    "venue": "ICLR 2019",
+    "url": "https://arxiv.org/abs/1812.09755",
+    "topic": "marl-comm",
+    "relevance": "IC3Net learns a binary communication gate per agent; we contrast its learned gate with an explicit VOI criterion."
+  },
+  {
+    "id": "jiang2018-atoc",
+    "title": "Learning Attentional Communication for Multi-Agent Cooperation",
+    "authors": "Jiechuan Jiang, Zongqing Lu",
+    "year": 2018,
+    "venue": "NeurIPS 2018",
+    "url": "https://arxiv.org/abs/1805.07733",
+    "topic": "marl-comm",
+    "relevance": "ATOC's attention unit decides when to form communication groups; a learned precursor to our acquisition gate."
+  },
+  {
+    "id": "ding2020-i2c",
+    "title": "Learning Individually Inferred Communication for Multi-Agent Cooperation",
+    "authors": "Ziluo Ding, Tiejun Huang, Zongqing Lu",
+    "year": 2020,
+    "venue": "NeurIPS 2020",
+    "url": "https://arxiv.org/abs/2006.06455",
+    "topic": "marl-comm",
+    "relevance": "I2C infers one-to-one communication need via causal effect of a neighbor on one's policy, closest in spirit to our gate."
+  },
+  {
+    "id": "wang2022-casec",
+    "title": "Context-Aware Sparse Deep Coordination Graphs",
+    "authors": "Tonghan Wang, Liang Zeng, Weijun Dong, Qianlan Yang, Yang Yu, Chongjie Zhang",
+    "year": 2022,
+    "venue": "ICLR 2022",
+    "url": "https://arxiv.org/abs/2106.02886",
+    "topic": "marl-comm",
+    "relevance": "Sparsifies coordination graphs by a variance-of-payoff criterion; we sparsify alignment edges by VOI instead."
+  },
+  {
+    "id": "hu2023-causal-moma",
+    "title": "Causal Policy Gradient for Whole-Body Mobile Manipulation",
+    "authors": "Jiaheng Hu, Peter Stone, Roberto Martin-Martin",
+    "year": 2023,
+    "venue": "RSS 2023",
+    "url": "https://arxiv.org/abs/2305.04866",
+    "topic": "causal-manip",
+    "relevance": "Causal MoMa discovers action-to-reward causal dependencies for whole-body control; our specialists carry such local causal models."
+  },
+  {
+    "id": "skalse2022-reward-hacking",
+    "title": "Defining and Characterizing Reward Gaming",
+    "authors": "Joar Skalse, Nikolaus H. R. Howe, Dmitrii Krasheninnikov, David Krueger",
+    "year": 2022,
+    "venue": "NeurIPS 2022",
+    "url": "https://arxiv.org/abs/2209.13085",
+    "topic": "safety-reward",
+    "relevance": "Formalizes proxy-reward hacking; motivates our process verifier as a guard against optimizing a hackable alignment proxy."
+  },
+  {
+    "id": "alshiekh2018-shielding",
+    "title": "Safe Reinforcement Learning via Shielding",
+    "authors": "Mohammed Alshiekh, Roderick Bloem, Rudiger Ehlers, Bettina Konighofer, Scott Niekum, Ufuk Topcu",
+    "year": 2018,
+    "venue": "AAAI 2018",
+    "url": "https://arxiv.org/abs/1708.08611",
+    "topic": "safety-reward",
+    "relevance": "Shield that overrides unsafe actions against a temporal-logic spec; our force-limit and cabinet-motion verifier plays this role."
+  },
+  {
+    "id": "julier1997-covariance-intersection",
+    "title": "A non-divergent estimation algorithm in the presence of unknown correlations",
+    "authors": "Simon J. Julier, Jeffrey K. Uhlmann",
+    "year": 1997,
+    "venue": "American Control Conference 1997",
+    "url": "https://doi.org/10.1109/ACC.1997.609105",
+    "topic": "fusion",
+    "relevance": "Covariance intersection fuses Gaussian beliefs with unknown shared information, avoiding double-counting a common prior."
+  }
+]

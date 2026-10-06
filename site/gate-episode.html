@@ -1,0 +1,259 @@
+<title>Alignment Gate Episode</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one column, a control bar, a wide SVG timeline, then two cost tiles and a network sketch side by side. */
+  :root {
+    --bg: #f3f4f6;
+    --panel: #ffffff;
+    --fg: #1d2330;
+    --muted: #5b6474;
+    --line: #cfd4dd;
+    --grid: #e6e9ef;
+    --accent: #b5551b;      /* copper: the gate opening */
+    --accent-soft: rgba(181, 85, 27, 0.14);
+    --base: #2f6f9f;        /* base specialist */
+    --verify: #5d7a2b;      /* verifier */
+    --arm: #4b4f66;         /* arm specialist */
+    --bad: #b23a3a;
+    --font-ui: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --font-data: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151921; --panel: #1d2230; --fg: #e8ebf1; --muted: #a0a8b8; --line: #3a4150; --grid: #2a3040;
+      --accent: #e0803f; --accent-soft: rgba(224, 128, 63, 0.18); --base: #6fa8d6; --verify: #9cbb5a; --arm: #aeb3c9; --bad: #e07070;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #151921; --panel: #1d2230; --fg: #e8ebf1; --muted: #a0a8b8; --line: #3a4150; --grid: #2a3040;
+    --accent: #e0803f; --accent-soft: rgba(224, 128, 63, 0.18); --base: #6fa8d6; --verify: #9cbb5a; --arm: #aeb3c9; --bad: #e07070;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+  .wrap { max-width: 880px; margin: 0 auto; padding-block: 28px 48px; padding-inline: 16px; display: grid; gap: 20px; }
+  h1 { font-size: 1.55rem; font-weight: 600; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .lede { margin: 0; max-width: 65ch; color: var(--muted); }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+  button { font: 500 14px var(--font-ui); color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 14px; cursor: pointer; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .scrub { display: flex; align-items: center; gap: 10px; flex: 1 1 240px; min-width: 0; }
+  input[type=range] { flex: 1; min-width: 0; accent-color: var(--accent); }
+  .step { font-family: var(--font-data); font-size: 13px; color: var(--muted); min-width: 7ch; font-variant-numeric: tabular-nums; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow-x: auto; }
+  svg { display: block; width: 100%; height: auto; max-width: 100%; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tile { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; min-width: 0; }
+  .tile .k { font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .tile .v { font-family: var(--font-data); font-size: 26px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .tile .u { font-size: 12.5px; color: var(--muted); }
+  .status { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 10px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--verify); flex: none; }
+  .dot.off { background: var(--bad); }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--sw); }
+  .note { font-size: 13px; color: var(--muted); max-width: 70ch; margin: 0; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <div>
+    <h1>The gate opens only when a neighbor's evidence would change the action</h1>
+    <p class="lede">One illustrative drawer-pull episode with three specialists. Values are synthetic, chosen to show the mechanism from the proposal, not measured results.</p>
+  </div>
+
+  <div class="bar">
+    <button id="play" type="button">Pause</button>
+    <button id="reset" type="button">Restart</button>
+    <div class="scrub">
+      <input id="scrub" type="range" min="0" max="59" value="0" aria-label="Episode step">
+      <span class="step" id="stepLabel">t = 0</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <svg id="tl" viewBox="0 0 760 392" role="img" aria-label="Episode timeline with specialist evidence, gated edges, and the chosen action"></svg>
+  </div>
+
+  <div class="row">
+    <div class="panel">
+      <div class="tiles">
+        <div class="tile"><div class="k">Always-align CAN</div><div class="v" id="cAll">0</div><div class="u">edge-messages so far (2 edges × every step)</div></div>
+        <div class="tile"><div class="k">VOA gate</div><div class="v" id="cGate">0</div><div class="u">edge-messages so far (only open edges)</div></div>
+      </div>
+      <div class="status"><span class="dot" id="presDot"></span><span id="presText">Decision preserved: gated action equals always-align action</span></div>
+    </div>
+    <div class="panel">
+      <svg id="net" viewBox="0 0 360 200" role="img" aria-label="Three specialists and the two gated edges into the arm"></svg>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span style="--sw: var(--base)">Base sees cabinet displacement x</span>
+    <span style="--sw: var(--verify)">Verifier sees force f against its limit</span>
+    <span style="--sw: var(--accent)">Edge open (VOA &gt; cost)</span>
+  </div>
+  <p class="note">Reading: the arm alone keeps pulling because handle displacement h rises either way (the proxy reward). When the base's evidence that the cabinet is sliding would flip the action to reposition, VOA for that edge clears its cost and the edge opens. The verifier's edge opens once near the force limit. Both edges stay closed the rest of the episode, which is where the cost saving comes from.</p>
+</div>
+
+<script>
+(function () {
+  const T = 60;
+  // Synthetic trajectories (deterministic).
+  const x = [], f = [], h = [];
+  for (let t = 0; t < T; t++) {
+    // Cabinet slides between t=24 and t=34, then is repositioned and holds.
+    let xv = 0;
+    if (t >= 24 && t < 30) xv = (t - 23) * 0.9;
+    else if (t >= 30 && t < 36) xv = Math.max(0, 5.4 - (t - 29) * 1.1);
+    x.push(xv);
+    // Force ramps late and spikes near the limit around t=44..47.
+    let fv = 8 + t * 0.25;
+    if (t >= 44 && t < 48) fv = 22 + (t - 43) * 2.2;
+    if (t >= 48) fv = 14 + (t - 48) * 0.3;
+    f.push(fv);
+    h.push(Math.min(100, t * 1.8 + (t > 36 ? (t - 36) * 0.6 : 0)));
+  }
+  const fLimit = 28;
+  // Gate: edge open when the neighbor's evidence would change the arm's action.
+  const openBase = x.map(v => v > 1.5);
+  const openVer = f.map(v => v > fLimit - 4);
+  const action = []; // 0 pull, 1 reposition, 2 release
+  for (let t = 0; t < T; t++) action.push(openVer[t] ? 2 : openBase[t] ? 1 : 0);
+  const actName = ['pull', 'reposition', 'release'];
+
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (name, attrs, parent) => { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const txt = (parent, s, attrs) => { const e = el('text', attrs, parent); e.textContent = s; return e; };
+
+  // ---- Timeline SVG ----
+  const svg = document.getElementById('tl');
+  const L = 150, R = 736, W = R - L;
+  const X = t => L + (t / (T - 1)) * W;
+  const lanes = { x: 56, f: 136, eb: 212, ev: 248, act: 296 };
+  const laneH = 56;
+  function build() {
+    svg.innerHTML = '';
+    const ink = css('--fg'), muted = css('--muted'), grid = css('--grid'), line = css('--line');
+    const base = css('--base'), ver = css('--verify'), accent = css('--accent'), arm = css('--arm'), bad = css('--bad');
+    txt(svg, 'Episode timeline', { x: 24, y: 28, 'font-size': 15, 'font-weight': 600, fill: ink });
+    // vertical grid every 10 steps
+    for (let t = 0; t <= T - 1; t += 10) {
+      el('line', { x1: X(t), x2: X(t), y1: 44, y2: 340, stroke: grid }, svg);
+      txt(svg, 't=' + t, { x: X(t), y: 356, 'text-anchor': 'middle', 'font-size': 11.5, fill: muted, 'font-family': 'IBM Plex Mono, monospace' });
+    }
+    // lane labels
+    const label = (y, s, c) => txt(svg, s, { x: 24, y, 'font-size': 13, 'font-weight': 500, fill: c || ink });
+    label(lanes.x + 18, 'Cabinet x (base)', base);
+    label(lanes.f + 18, 'Force f (verifier)', ver);
+    label(lanes.eb + 4, 'Edge base→arm', ink);
+    label(lanes.ev + 4, 'Edge verifier→arm', ink);
+    label(lanes.act + 18, 'Arm action', ink);
+    // sparkline x
+    const Yx = v => lanes.x + laneH - (v / 6) * (laneH - 8);
+    el('line', { x1: L, x2: R, y1: lanes.x + laneH, y2: lanes.x + laneH, stroke: line }, svg);
+    el('path', { d: x.map((v, t) => (t ? 'L' : 'M') + X(t) + ' ' + Yx(v)).join(''), fill: 'none', stroke: base, 'stroke-width': 1.75 }, svg);
+    txt(svg, 'x > 1.5: pulling moves the cabinet, not the drawer', { x: X(24) + 6, y: lanes.x + 12, 'font-size': 11.5, fill: muted });
+    // sparkline f with limit
+    const Yf = v => lanes.f + laneH - (v / 36) * (laneH - 8);
+    el('line', { x1: L, x2: R, y1: lanes.f + laneH, y2: lanes.f + laneH, stroke: line }, svg);
+    el('line', { x1: L, x2: R, y1: Yf(fLimit), y2: Yf(fLimit), stroke: bad, 'stroke-dasharray': '4 4' }, svg);
+    txt(svg, 'force limit', { x: R, y: Yf(fLimit) - 4, 'text-anchor': 'end', 'font-size': 11.5, fill: bad });
+    el('path', { d: f.map((v, t) => (t ? 'L' : 'M') + X(t) + ' ' + Yf(v)).join(''), fill: 'none', stroke: ver, 'stroke-width': 1.75 }, svg);
+    // edge bands (drawn fully, revealed by a clip that follows the playhead)
+    const clip = el('clipPath', { id: 'reveal' }, el('defs', {}, svg));
+    const clipRect = el('rect', { x: L, y: 40, width: 0, height: 320 }, clip);
+    const g = el('g', { 'clip-path': 'url(#reveal)' }, svg);
+    const band = (arr, y) => {
+      el('rect', { x: L, y: y - 9, width: W, height: 18, fill: grid, rx: 3 }, g);
+      arr.forEach((o, t) => { if (o) el('rect', { x: X(t) - W / (T - 1) / 2, y: y - 9, width: W / (T - 1) + 0.5, height: 18, fill: accent }, g); });
+    };
+    band(openBase, lanes.eb);
+    band(openVer, lanes.ev);
+    // action strip
+    const colors = [arm, base, ver];
+    el('rect', { x: L, y: lanes.act + 2, width: W, height: 28, fill: grid, rx: 3 }, g);
+    action.forEach((a, t) => el('rect', { x: X(t) - W / (T - 1) / 2, y: lanes.act + 2, width: W / (T - 1) + 0.5, height: 28, fill: colors[a], 'fill-opacity': a === 0 ? 0.35 : 0.85 }, g));
+    txt(svg, 'pull', { x: X(10), y: lanes.act + 20, 'text-anchor': 'middle', 'font-size': 11.5, fill: ink });
+    txt(svg, 'reposition', { x: X(29), y: lanes.act + 20, 'text-anchor': 'middle', 'font-size': 11.5, fill: ink, 'font-weight': 500 });
+    txt(svg, 'release', { x: X(45.5), y: lanes.act + 20, 'text-anchor': 'middle', 'font-size': 11.5, fill: ink, 'font-weight': 500 });
+    txt(svg, 'pull', { x: X(54), y: lanes.act + 20, 'text-anchor': 'middle', 'font-size': 11.5, fill: ink });
+    // playhead
+    const head = el('line', { x1: X(0), x2: X(0), y1: 44, y2: 340, stroke: accent, 'stroke-width': 1.5 }, svg);
+    const headLbl = txt(svg, '', { x: X(0), y: 380, 'text-anchor': 'middle', 'font-size': 11.5, fill: accent, 'font-family': 'IBM Plex Mono, monospace' });
+    return { clipRect, head, headLbl };
+  }
+
+  // ---- Network SVG ----
+  const net = document.getElementById('net');
+  function buildNet() {
+    net.innerHTML = '';
+    const ink = css('--fg'), muted = css('--muted'), line = css('--line'), accent = css('--accent');
+    const base = css('--base'), ver = css('--verify');
+    txt(net, 'Which edges are open now', { x: 16, y: 24, 'font-size': 14, 'font-weight': 600, fill: ink });
+    const node = (cx, cy, name, sub, c) => {
+      el('rect', { x: cx - 56, y: cy - 24, width: 112, height: 48, rx: 8, fill: 'none', stroke: c || line, 'stroke-width': 1.5 }, net);
+      txt(net, name, { x: cx, y: cy - 3, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 600, fill: ink });
+      txt(net, sub, { x: cx, y: cy + 14, 'text-anchor': 'middle', 'font-size': 11, fill: muted });
+    };
+    const eB = el('line', { x1: 116, y1: 84, x2: 206, y2: 118, stroke: line, 'stroke-width': 1.5 }, net);
+    const eV = el('line', { x1: 116, y1: 164, x2: 206, y2: 130, stroke: line, 'stroke-width': 1.5 }, net);
+    node(60, 84, 'Base', 'sees {x, pose}', base);
+    node(60, 164, 'Verifier', 'sees {f limit, x}', ver);
+    node(262, 124, 'Arm', 'sees {f, h, k}');
+    const lblB = txt(net, 'closed', { x: 150, y: 92, 'text-anchor': 'middle', 'font-size': 11, fill: muted, 'font-family': 'IBM Plex Mono, monospace' });
+    const lblV = txt(net, 'closed', { x: 150, y: 160, 'text-anchor': 'middle', 'font-size': 11, fill: muted, 'font-family': 'IBM Plex Mono, monospace' });
+    return { eB, eV, lblB, lblV, line, accent, muted };
+  }
+
+  let tl = build(), nt = buildNet();
+  const scrub = document.getElementById('scrub'), stepLabel = document.getElementById('stepLabel');
+  const cAll = document.getElementById('cAll'), cGate = document.getElementById('cGate');
+  const presDot = document.getElementById('presDot'), presText = document.getElementById('presText');
+
+  function render(t) {
+    const accent = css('--accent');
+    tl.clipRect.setAttribute('width', X(t) - L + 0.5);
+    tl.head.setAttribute('x1', X(t)); tl.head.setAttribute('x2', X(t));
+    tl.headLbl.setAttribute('x', X(t)); tl.headLbl.textContent = actName[action[t]];
+    stepLabel.textContent = 't = ' + t;
+    scrub.value = t;
+    let all = 0, gate = 0;
+    for (let i = 0; i <= t; i++) { all += 2; gate += (openBase[i] ? 1 : 0) + (openVer[i] ? 1 : 0); }
+    cAll.textContent = all; cGate.textContent = gate;
+    // In this episode the gate preserves the decision at every step, so the indicator stays green.
+    presDot.classList.remove('off');
+    presText.textContent = 'Decision preserved at t=' + t + ': gated action "' + actName[action[t]] + '" equals the always-align action';
+    const setEdge = (e, lbl, open) => {
+      e.setAttribute('stroke', open ? accent : nt.line);
+      e.setAttribute('stroke-width', open ? 3 : 1.5);
+      lbl.textContent = open ? 'open' : 'closed';
+      lbl.setAttribute('fill', open ? accent : nt.muted);
+      lbl.setAttribute('font-weight', open ? 600 : 400);
+    };
+    setEdge(nt.eB, nt.lblB, openBase[t]);
+    setEdge(nt.eV, nt.lblV, openVer[t]);
+  }
+
+  let t = 0, playing = true, last = 0;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced) { playing = false; t = T - 1; }
+  const playBtn = document.getElementById('play');
+  playBtn.textContent = playing ? 'Pause' : 'Play';
+  function tick(now) {
+    if (playing && now - last > 180) { last = now; t = (t + 1) % T; render(t); }
+    requestAnimationFrame(tick);
+  }
+  render(t);
+  requestAnimationFrame(tick);
+  playBtn.addEventListener('click', () => { playing = !playing; playBtn.textContent = playing ? 'Pause' : 'Play'; });
+  document.getElementById('reset').addEventListener('click', () => { t = 0; render(t); });
+  scrub.addEventListener('input', e => { playing = false; playBtn.textContent = 'Play'; t = Number(e.target.value); render(t); });
+  const rebuild = () => { tl = build(); nt = buildNet(); render(t); };
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', rebuild);
+  new MutationObserver(rebuild).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>

@@ -1,0 +1,26 @@
+{
+  "theorem_check": {
+    "cases": 4332,
+    "agree": 4326,
+    "positive": 2008,
+    "ties": 6,
+    "note": "disagreements are exact ties: VOA is 0 to floating precision while two actions have equal expected utility"
+  },
+  "milestone": {
+    "arm_prior_p": 0.1875,
+    "arm_prior_q": 0.11864406779661016,
+    "arm_alone_action": "pull",
+    "voa_base": 0.4729978813559321,
+    "voa_verifier": 0.3062542372881356,
+    "action_if_base_reports_sliding": "reposition",
+    "action_if_verifier_reports_near": "release"
+  },
+  "design": {
+    "pi_s": 0.3,
+    "pi_m": 0.2,
+    "arm_own_accuracy": 0.65,
+    "base_accuracy": 0.95,
+    "verifier_accuracy": 0.99,
+    "edge_cost": 0.1
+  }
+}
